@@ -14,7 +14,9 @@
 #endif
 
 #include "ff.h"
+#ifndef OFF_TARGET
 #include "fs_mount.h"
+#endif
 #include "wave.h"
 #include "music_file.h"
 #include "timing.h"
@@ -24,7 +26,6 @@
 
 int16_t d_buff[RAM_BUFFER_LENGTH];
 unsigned char working[WORKING_SIZE];
-
 
 #ifndef OFF_TARGET
 int process(int argc, char **argv);
@@ -45,6 +46,11 @@ int main()
         return -1;
     }
 
+    // These files can be accessed at:
+    // http://www.aoakley.com/articles/2018-08-24-stereo-test.php
+    // https://www2.cs.uic.edu/~i101/SoundFiles/
+    // http://nigelcoldwell.co.uk/audio/
+    // https://ia902708.us.archive.org/16/items/Audio_MP3_test/20107TEST.mp3
     const char a[8][20] = {"stereo-test.mp3", "StarWars60.wav", "20107TEST.mp3", "abr032.mp3", "abr160.mp3", "mp3-032.mp3", "mp3-320.mp3", "preamble10.wav" };
     char in[25];
     char out[25];
@@ -89,16 +95,18 @@ int process(int argc, char **argv)
 {
     music_file mf;
     FIL outfile;
-    fs_mount fs;
 
     // Parse the args
     if (argc != 3) 
     {
-        printf("usage: convert infile.mp3 outfile.wav\n");
+        printf("usage: decode infile outfile.wav\n");
         return -1;
     }
     
     InitTimer();
+
+#ifndef OFF_TARGET
+    fs_mount fs;
 
     // Mount the file system
     fsInitialise(&fs);
@@ -107,6 +115,7 @@ int process(int argc, char **argv)
         printf("cannot mount sd card\n");
         return -1;
     }
+#endif
 
     printf("In: %s, Out: %s\n", argv[1], argv[2]);
 
@@ -209,8 +218,9 @@ int process(int argc, char **argv)
     f_close(&outfile);
     musicFileClose(&mf);
 
-
+#ifndef OFF_TARGET
     fsUnmount(&fs);
+#endif
 
     return 0;
 }

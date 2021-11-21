@@ -9,10 +9,9 @@
 .history/
 
 # Build directory
+/test/build
 /build
 
-# Jupyter checkpoints
-/.ipynb_checkpoints
-
-# Sample wav fiel used by Jupyter
-sample.wav
+# Generated sound files
+/test/*.wav
+/test/*.mp3
