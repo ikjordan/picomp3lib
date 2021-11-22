@@ -21,4 +21,8 @@ Decode triggered by call to `musicFileRead` populate a supplied buffer. By defua
 An off target test harness that can be run on a Raspberry Pi 4, uses a shim layer to emulate `FatFS`
 
 ## Usage
-For an example of how to use this as submodule please see: https://github.com/ikjordan/picosounds
+For examples of how to use this library as submodule please see:
+1. https://github.com/ikjordan/picosounds
+2. https://github.com/ikjordan/picomp3test
+
+
