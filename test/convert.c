@@ -12,7 +12,7 @@
 #include "stdlib.h"
 #endif
 
-#include "ff.h"
+#include <ff.h>
 #include "wave.h"
 #include "music_file.h"
 #include "timing.h"
