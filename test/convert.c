@@ -2,21 +2,17 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <string.h>
 #ifndef OFF_TARGET
 #include "pico/stdlib.h"
+#include "f_util.h"
+#include "hw_config.h"
+#include "fs_mount.h"
 #else
 #include "stdlib.h"
 #endif
-#include <string.h>
-#ifndef OFF_TARGET
-#include "f_util.h"
-#include "hw_config.h"
-#endif
 
 #include "ff.h"
-#ifndef OFF_TARGET
-#include "fs_mount.h"
-#endif
 #include "wave.h"
 #include "music_file.h"
 #include "timing.h"
@@ -30,6 +26,7 @@ unsigned char working[WORKING_SIZE];
 #ifndef OFF_TARGET
 int process(int argc, char **argv);
 
+// Do not pass arguments to main on target
 int main()
 {
     bool error = false;
@@ -57,6 +54,7 @@ int main()
     char* argv[3] = {NULL, in, out};
     char* ret;
 
+    // Build list of files to convert
     for (int i = 0;i < 8; ++i)
     {
         strcpy(in, a[i]);
@@ -78,7 +76,7 @@ int main()
 
         if (process(3, argv))
         {
-            printf("Error\n");
+            printf("Error in conversion\n");
             return -1;
         }
     }
@@ -87,6 +85,14 @@ int main()
 }
 #endif
 
+/*
+ * Decode the file passed in, and write out a wav file 
+ * containing the PCM data.
+ * If configured for looping create a a wav file containing the 
+ * PCM data decoded in the allowed time interval (5 secs off
+ * target, 30 seconds on target)
+ * 
+ */
 #ifdef OFF_TARGET
 int main(int argc, char **argv)
 #else
@@ -119,28 +125,29 @@ int process(int argc, char **argv)
 
     printf("In: %s, Out: %s\n", argv[1], argv[2]);
 
-    // Open the file
+    // Open the file, pass in the buffer used to store source data 
+    // read from file
     if (!musicFileCreate(&mf, argv[1], working, WORKING_SIZE)) 
     {
         printf("mp3FileCreate error\n");
         return -1;
 
-        // Parse the header and skip tags during create
-        // store the offset to the first frame, to accelerate wrap
-        // Add an option to mp3 and wav for testing
     }
-        
+    
+    // Create the file to hold the PCM output
     if (f_open(&outfile, argv[2], FA_CREATE_ALWAYS | FA_WRITE) != FR_OK)
     {
         printf("Outfile open error\n");
         return -1;
     }
 
-    // Get the sample rate
+    // Get the input file sampling rate
     uint32_t sample_rate = musicFileGetSampleRate(&mf);
     uint16_t num_channels =  musicFileGetChannels(&mf);
 
     printf("Sample rate: %u Channels: %u\n", sample_rate, num_channels);
+
+    // Write the wav header to the output file
     writeWavHeader(&outfile, sample_rate, num_channels);
 
     // loop through all of the data
@@ -154,6 +161,7 @@ int process(int argc, char **argv)
     int32_t diff_time;
     int32_t total_dec_time = 0;
 
+    // If looping stop after 5 secs (off target) or 30 secs (On target)
     int32_t stop_time = 
 #ifdef NO_LOOP
                         999999;
@@ -203,10 +211,11 @@ int process(int argc, char **argv)
     
     if (success)
     {
-        // update the header
+        // update the file header of the output file
         updateWavHeader(&outfile, num_samples, num_channels);
     }
 
+    // Report the performance
     float time_to_decode = (float)total_dec_time / GetClockFrequency();
     float time_decoded = (float)num_samples / mf.sample_rate;
     printf("Time to decode = %6.2f s. Decoded Length = %6.2f s. Ratio = %6.2f\n\n", 
@@ -224,4 +233,3 @@ int process(int argc, char **argv)
 
     return 0;
 }
-

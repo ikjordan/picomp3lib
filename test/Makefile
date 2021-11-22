@@ -5,7 +5,7 @@ OUTPUTBIN = decode
 COMMON_SRC := ./convert.c \
               ./timing.c \
               ./wave.c \
-              ./ff.c \
+              ./ff_shim.c \
               ../interface/music_file.c \
               ../src/bitstream.c \
               ../src/buffers.c \
@@ -28,8 +28,8 @@ ObjDir = ./build
 BinDir = $(ObjDir)
 
 CC = gcc
-CFLAGS += -Og -ggdb -g3 -I../src -I../interface -I./ -include stdlib.h -DARM=1 -DOFF_TARGET
-#CFLAGS += -O0 -ggdb -g3 -I../src -I../interface -I./ -include stdlib.h -DARM=1 -DOFF_TARGET
+CFLAGS += -Og -ggdb -g3 -I../src -I../interface -I./ -DARM=1 -DOFF_TARGET
+#CFLAGS += -O0 -ggdb -g3 -I../src -I../interface -I./ -DARM=1 -DOFF_TARGET
 LFLAGS +=
 
 # Create list of objects from source

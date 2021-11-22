@@ -1,3 +1,4 @@
+// Minimal shim layer to allow FatFS commands on Linux machine
 #include "ff.h"
 
 /* Open or create a file */

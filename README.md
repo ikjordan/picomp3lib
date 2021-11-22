@@ -15,7 +15,7 @@ Base sourec code for library
 `interface`  
 High level interface to decoder. Uses `FatFS` to access files.  
 See https://github.com/carlk3/no-OS-FatFS-SD-SPI-RPi-Pico for a Pico compatible `FatFS` library   
-Decode triggered by call to `musicFileRead` populate a supplied buffer. By defualt plays file in loop, can be overridden by specidying `-DNO_LOOP`  
+Decode triggered by call to `musicFileRead` populate a supplied buffer. By defualt plays file in loop, can be overridden by specifying `-DNO_LOOP`  
 
 `test`   
 An off target test harness that can be run on a Raspberry Pi 4, uses a shim layer to emulate `FatFS`

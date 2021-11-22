@@ -1,8 +1,8 @@
+// Minimal shim layer to allow FatFS commands on Linux machine
 #pragma once
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
-
 
 typedef struct FIL 
 {
@@ -15,16 +15,16 @@ typedef uint32_t FSIZE_t;
 
 typedef enum 
 {
-	FR_OK = 0,
+    FR_OK = 0,
     FR_NOT_OK,
 } FRESULT;
-#define	FA_READ				0x01
-#define	FA_WRITE			0x02
-#define	FA_OPEN_EXISTING	0x00
-#define	FA_CREATE_NEW		0x04
-#define	FA_CREATE_ALWAYS	0x08
-#define	FA_OPEN_ALWAYS		0x10
-#define	FA_OPEN_APPEND		0x30
+#define	FA_READ             0x01
+#define	FA_WRITE            0x02
+#define	FA_OPEN_EXISTING    0x00
+#define	FA_CREATE_NEW       0x04
+#define	FA_CREATE_ALWAYS    0x08
+#define	FA_OPEN_ALWAYS      0x10
+#define	FA_OPEN_APPEND      0x30
 
 /* Open or create a file */
 extern FRESULT f_open(FIL* fp, const TCHAR* path, BYTE mode);
