@@ -1,6 +1,9 @@
 # Off Target Test Harness
-An off target test harness that can be run on a Raspberry Pi 4 or x86 Linux system. Uses a minimal shim layer to emulate `FatFS`  
-Decodes an mp3 file for 5 seconds, generating a wav file. Prints how much faster than real time the decode is.
+An off target test harness that can be run on a Raspberry Pi 4 or other Linux based system. Uses a minimal shim layer to emulate `FatFS`.  
+By default the decoder is run for 5 seconds (off target) and 30 seconds (on target). This may result in the file being decoded multiple times. A wav file is created from the total output. Prints how much faster than real time the decode is.
+
+To decode the entire mp3 file once only, define `NO_LOOP` in the `make` file
+
 ## To Build and Run
 1. `make` from this (test) directory  
 2. `.\build\decode input_mp3_file output_wav_file` 

@@ -32,6 +32,9 @@ CFLAGS += -Og -ggdb -g3 -I../src -I../interface -I./ -DARM=1 -DOFF_TARGET
 #CFLAGS += -O0 -ggdb -g3 -I../src -I../interface -I./ -DARM=1 -DOFF_TARGET
 LFLAGS +=
 
+# To decode whole file once, rather than run decoder for timed interval
+#CFLAGS += -DNO_LOOP
+
 # Create list of objects from source
 COMMON_OBJS := $(patsubst %.c, $(ObjDir)/%.o, $(notdir $(COMMON_SRC)))
 
