@@ -271,7 +271,7 @@ static __inline int CLZ(int x)
 	return numZeros;
 }
 
-#elif defined(__GNUC__) && (defined(ARM) || defined(__ARMEL__)) && (__ARM_ARCH >= 7)
+#elif defined(__GNUC__) && (defined(ARM) || defined(__ARMEL__)) && (__ARM_ARCH >= 7) && !(__ARM_64BIT_STATE == 1)
 
 static __inline int MULSHIFT32(int x, int y)
 {
