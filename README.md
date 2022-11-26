@@ -9,16 +9,62 @@ Additions for ARM from AdaFruit https://github.com/adafruit/Adafruit_MP3
 3. Cmake files, so can be used as a library for Pico
 
 ## Directory Structure
-`src`  
-Base sourec code for library  
+There are 4 main steps in decoding and playing an MP3 file on the RP Pico
+1. Read the MP3 file from internal flash or SD Card
+2. Extract MP3 frames from the file
+3. Decode the MP3 frame into PCM data chunks
+4. Generate sounds from the PCM data chunks through e.g. PWM or I2S
 
-`interface`  
-High level interface to decoder. Uses `FatFS` to access files.  
-See https://github.com/carlk3/no-OS-FatFS-SD-SPI-RPi-Pico for a Pico compatible `FatFS` library   
-Decode triggered by call to `musicFileRead` populate a supplied buffer. By default plays file in loop, can be overridden by specifying `-DNO_LOOP`  
+The original helix library (in the `src` directory) provides support for (3). Additions (in the `interface` directory) provides support for (1) and (2)
 
-`test`   
-An off target test harness that can be run on a Raspberry Pi 4, uses a shim layer to emulate `FatFS`
+To initially experiment with the library, without having to be concerned with reading an SD Card, or configuring PWM or I2S, there
+is an offline example in the `test` directory. This example can be build for the Raspberry Pi (or other Linux based systems). The example reads an MP3 file and writes a wav file containing the decoded contents.
+Build instructions are contained in the [Readme](test/README.md)
+
+### `interface` directory
+Provides a high level interface to decoder. Uses `FatFS` to access files.  
+See https://github.com/carlk3/no-OS-FatFS-SD-SPI-RPi-Pico for a Pico compatible `FatFS` library
+
+The MP3 file to play is initially opened using
+#### `musicFileCreate`
+
+The format of the file (to e.g. configure the output mechanism) can then be found using
+#### `musicFileGetSampleRate`
+#### `musicFileGetChannels`
+#### `musicFileIsStereo`
+
+The file is decoded through calls to
+#### `musicFileRead`
+
+The progress through the file can be determined through calls to
+#### `musicFileBytesLeft`
+
+To terminate playback, the file is closed using
+#### `musicFileClose`
+
+A simple on target example can be found at:
+https://github.com/ikjordan/picomp3test
+
+### `test` directory
+An off target test harness that can be run on a Raspberry Pi (or other Linux systems), uses a shim layer to emulate `FatFS`. Decodes an MP3 file
+and creates a wav file. See [Readme](test/README.md) for more details
+
+### `src` directory
+Base source code for library. The public interface consists 6 functions, however typically the higher level public interface
+defined in [music_file.h](test/music_file.h) the `interface` directory is used.
+#### `MP3InitDecoder`
+Initialises the decoder.
+#### `MP3FreeDecoder`
+Clears buffers
+#### `MP3Decode`
+Decodes one frame of MP3 data
+#### `MP3GetLastFrameInfo`
+Returns info about last MP3 frame decoded (number of samples decoded, sample rate, bitrate, etc). Typically called directly
+after a call to MP3Decode
+#### `MP3GetNextFrameInfo`
+Parses the next MP3 frame header
+#### `MP3FindSyncWord`
+Locates the next byte-aligned sync word in the raw mp3 stream
 
 ## Usage
 This library should be included in a project as a submodule.  

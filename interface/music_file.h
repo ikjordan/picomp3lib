@@ -28,7 +28,7 @@ typedef struct music_file
 
 } music_file;
 
-// Function decalarations
+// Function declarations
 extern bool musicFileCreate(music_file* mf, const char* filename, unsigned char* working, uint32_t len);
 extern void musicFileClose(music_file* mf);
 

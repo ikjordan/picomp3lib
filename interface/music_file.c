@@ -147,7 +147,7 @@ bool musicFileCreate(music_file* mf, const char* filename, unsigned char* workin
                 return false;
             }
 
-            // Save the positon of the first frame
+            // Save the position of the first frame
             mf->file_offset = mf->work_offset;
 
             // Populate info
